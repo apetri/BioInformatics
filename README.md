@@ -1,2 +1,2 @@
 # easyVCF
-Lightweight reader for VCF files
+Lightweight reader for VCF files, requires numpy, pandas
