@@ -3,6 +3,7 @@ Lightweight I/O for VCF files
 
 """
 
+import re
 import pandas as pd
 
 ###############
@@ -41,15 +42,27 @@ class VCFData(object):
 		#Read each line of metadata until the column names are found
 		while True:
 			line = fp.readline().strip("\n")
+
+			#If we found the column header, we are done
 			if line.startswith("#CHROM"):
 				meta["columns"] = filter(lambda n:n,line[1:].split(" "))
 				return meta
+
+			#Strip the first ##
+			line = line.strip("##")
+			field,value = re.match(r"(.*?)=(.*)",line).groups()
+
+			#Separate cases for INFO, FILTER, FORMAT
+			if field in ["INFO","FILTER","FORMAT"]:
+				#TODO: temporary
+				meta[field] = value
+			else:
+				meta[field] = value
 
 	#Read data
 	@staticmethod
 	def _read_data(fp,columns):
 		return pd.read_csv(fp,delim_whitespace=True,header=None,names=columns,na_values=".")
-
 
 	#Read single file
 	@classmethod
