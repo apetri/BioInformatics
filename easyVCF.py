@@ -54,8 +54,28 @@ class VCFData(object):
 
 			#Separate cases for INFO, FILTER, FORMAT
 			if field in ["INFO","FILTER","FORMAT"]:
-				#TODO: temporary
-				meta[field] = value
+
+				#Allocate space for field
+				if field not in meta:
+					meta[field] = dict()
+
+				#Split subfields
+				value = value.strip("<").strip(">")
+				for spec in value.split(","):
+
+					#TODO: temporary
+					try:
+						subfield,subvalue = spec.split("=")
+					except:
+						continue
+
+					#Allocate space for subfield
+					if subfield not in meta[field]:
+						meta[field][subfield] = list()
+
+					#Fill in value
+					meta[field][subfield].append(subvalue)
+
 			else:
 				meta[field] = value
 
@@ -73,6 +93,11 @@ class VCFData(object):
 			meta = cls._read_meta(fp)
 			columns = meta["columns"]
 			data = cls._read_data(fp,columns)
+
+		#Reformat metadata in a convenient way
+		for field in ["INFO","FILTER","FORMAT"]:
+			if field in meta:
+				meta[field] = pd.DataFrame.from_dict(meta[field]).set_index("ID")
 
 		#Instantiate and return
 		return cls(data,meta)
