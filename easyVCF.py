@@ -28,7 +28,23 @@ class VCFData(object):
 
 	@property
 	def columns(self):
-		return self.meta["columns"] 
+		return self.meta["columns"]
+
+	@property
+	def header(self):
+		return dict((k,self.meta[k]) for k in self.meta if k not in ["INFO","FILTER","FORMAT","columns"]) 
+
+	@property
+	def INFO(self):
+		return self.meta["INFO"]
+
+	@property
+	def FORMAT(self):
+		return self.meta["FORMAT"]
+
+	@property
+	def FILTER(self):
+		return self.meta["FILTER"] 
 
 	##############
 	#Input/output#
@@ -61,14 +77,19 @@ class VCFData(object):
 
 				#Split subfields
 				value = value.strip("<").strip(">")
+
+				#Treat the Description subfield separately
+				value,description = re.match(r"(.*),Description=(.*)",value).groups()
+				if "Description" not in meta[field]:
+					meta[field]["Description"] = list()
+
+				meta[field]["Description"].append(description.replace('"',''))
+
+				#Cycle over the remaining subfields
 				for spec in value.split(","):
-
-					#TODO: temporary
-					try:
-						subfield,subvalue = spec.split("=")
-					except:
-						continue
-
+		
+					subfield,subvalue = spec.split("=")
+			
 					#Allocate space for subfield
 					if subfield not in meta[field]:
 						meta[field][subfield] = list()
