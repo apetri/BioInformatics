@@ -76,7 +76,7 @@ class PeakMartCross(object):
 
 	#Operate by chromosome
 	@staticmethod
-	def pkmart_find(peaks,mart,bp_tolerance=2000):
+	def pkfind_chromosome(peaks,mart,bp_tolerance=2000):
 
 		#Start, end of bp peaks
 		ps,pe = peaks.pstart.values,peaks.pend.values
@@ -113,7 +113,18 @@ class PeakMartCross(object):
 		pk_grp = self.peaks.groupby("chromosome")
 		mart_grp = self.mart.groupby("chromosome")
 
-		
+		#List of results, by chromosome
+		cross_all = list()
 
+		#Cycle over chromosomes
+		for ch in pk_grp.groups:
+			cross_df = self.pkfind_chromosome(pk_grp.get_group(ch),mart_grp.get_group(ch),bp_tolerance=bp_tolerance)
+			cross_df["chromosome"] = ch
+			cross_all.append(cross_df)
+
+		#Concatenate, reorder, return
+		column_order = ["project","chromosome","pstart","pend","pampl","gstart","gend","distance","gid","pid"]
+		cross_all = pd.concat(cross_all,axis=0,ignore_index=True)
+		return cross_all[column_order]
 
 
