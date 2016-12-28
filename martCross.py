@@ -2,6 +2,10 @@
 Find bp summits which are within a fixed distance from mart regions
 
 """
+from __future__ import division
+
+import sys
+import ConfigParser
 
 import numpy as np
 import pandas as pd
@@ -70,6 +74,13 @@ class PeakMartCross(object):
 		#Return
 		return pk
 
+	#Change peak amplitude interval
+	def setPampl(self,pampl):
+
+		self._peaks["pampl"] = pampl
+		self._peaks["pstart"] = self._peaks["pmid"] - pampl//2 
+		self._peaks["pend"] = self._peaks["pmid"] + pampl//2
+
 	#######################################
 	#######Mart region finder##############
 	#######################################
@@ -126,5 +137,48 @@ class PeakMartCross(object):
 		column_order = ["project","chromosome","pstart","pend","pampl","gstart","gend","distance","gid","pid"]
 		cross_all = pd.concat(cross_all,axis=0,ignore_index=True)
 		return cross_all[column_order]
+
+###########################
+#########Execution#########
+###########################
+
+def main():
+	
+	#Check number of arguments
+	if len(sys.argv)<2:
+		print("Usage: python {0} config_file.ini".format(sys.argv[0]))
+		sys.exit(1)
+
+	#Read configuration
+	options = ConfigParser.ConfigParser()
+	print("[+] Reading options from: {0}".format(sys.argv[1]))
+	options.read(sys.argv[1])
+	section = "PeakMart"
+
+	#Read in datasets
+	peak_file = options.get(section,"peak_file")
+	print("[+] Reading bp peaks from: {0}".format(peak_file))
+	mart_file = options.get(section,"mart_file")
+	print("[+] Reading mart regions from: {0}".format(mart_file))
+
+	data = PeakMartCross.from_files(peak_file,mart_file)
+
+	#Set bp interval
+	pampl = options.getint(section,"pampl")
+	print("[+] Setting bp interval to: {0}".format(pampl))
+	data.setPampl(pampl)
+
+	#Find cross regions
+	bp_tolerance = options.getint(section,"bp_tolerance")
+	print("[+] Finding cross regions in data, with tolerance: {0} bp".format(bp_tolerance))
+	cross = data.pkfind(bp_tolerance=bp_tolerance)
+
+	#Output
+	outfile = options.get(section,"output_file")
+	print("Writing result to: {0}".format(outfile))
+	cross.to_excel(outfile)
+
+if __name__=="__main__":
+	main()
 
 
