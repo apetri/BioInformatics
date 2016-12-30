@@ -14,4 +14,4 @@ Or download it with the link on the right. Go in the code directory
 Start a python shell and follow the [example](http://nbviewer.jupyter.org/github/apetri/easyVCF/blob/master/example.ipynb)
 
 # Mart/bp cross finder
-Requires all the dependencies above plus [xlrd](https://pypi.python.org/pypi/xlrd)
+Requires all the dependencies above plus [xlrd](https://pypi.python.org/pypi/xlrd), [xlwt](https://pypi.python.org/pypi/xlwt)

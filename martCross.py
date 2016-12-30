@@ -175,7 +175,7 @@ def main():
 
 	#Output
 	outfile = options.get(section,"output_file")
-	print("Writing result to: {0}".format(outfile))
+	print("[+] Writing result to: {0}".format(outfile))
 	cross.to_excel(outfile)
 
 if __name__=="__main__":
