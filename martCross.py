@@ -136,6 +136,13 @@ class PeakMartCross(object):
 		#Concatenate, reorder, return
 		column_order = ["project","chromosome","pstart","pend","pampl","gstart","gend","distance","gid","pid"]
 		cross_all = pd.concat(cross_all,axis=0,ignore_index=True)
+		
+		#Add a column that says if the peak is matched or not to a MART region
+		matched = cross_all[["chromosome","pid"]].drop_duplicates()
+		matched["match"] = 1
+		self._peaks = pd.merge(self._peaks,matched,on=("chromosome","pid"),how="left")
+
+		#Return
 		return cross_all[column_order]
 
 ###########################
@@ -177,6 +184,17 @@ def main():
 	outfile = options.get(section,"output_file")
 	print("[+] Writing result to: {0}".format(outfile))
 	cross.to_excel(outfile)
+
+	#Optionally save list of matched/non matched peaks
+	if options.getboolean(section,"save_match_list"):
+		
+		outfile_yes = outfile.replace(".xls","_match.xls")
+		print("[+] Writing matched peaks to: {0}".format(outfile_yes))
+		data.peaks.query("match==match").drop("match",axis=1).to_excel(outfile_yes)
+
+		outfile_no = outfile.replace(".xls","_no_match.xls")
+		print("[+] Writing non matched peaks to: {0}".format(outfile_no))
+		data.peaks.query("match!=match").drop("match",axis=1).to_excel(outfile_no)
 
 if __name__=="__main__":
 	main()

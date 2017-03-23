@@ -11,7 +11,7 @@ Or download it with the link on the right. Go in the code directory
 
 	cd easyVCF
 
-Start a python shell and follow the [example](http://nbviewer.jupyter.org/github/apetri/easyVCF/blob/master/example.ipynb)
+Start a python shell and follow the [example](http://nbviewer.jupyter.org/github/apetri/easyVCF/blob/master/exampleVCF.ipynb)
 
 # Mart/bp cross finder
-Requires all the dependencies above plus [xlrd](https://pypi.python.org/pypi/xlrd), [xlwt](https://pypi.python.org/pypi/xlwt)
+Requires all the dependencies above plus [xlrd](https://pypi.python.org/pypi/xlrd), [xlwt](https://pypi.python.org/pypi/xlwt). To operate, just follow the [example](http://nbviewer.jupyter.org/github/apetri/easyVCF/blob/master/exampleMartCross.ipynb)
