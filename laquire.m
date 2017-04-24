@@ -2,12 +2,15 @@
 %%%%%%%%%%Options%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%Each input row must be in the format: <fileName> <sheet> <background column> <first data column> <last data column> <first row> <last row>
+%First and last data rows
+firstRow = 2
+lastRow = 300
 
+%Each input row must be in the format: <fileName> <sheet> <background column> <first data column> <last data column>
 inputs = {
     
-    'data/a2.xlsx' 1 'B' 'C' 'D' 2 601 ;
-    'data/a2.xlsx' 1 'B' 'E' 'G' 2 601 ;
+    'data/a2.xlsx' 1 'B' 'C' 'D' ;
+    'data/a2.xlsx' 1 'B' 'E' 'G' ;
 
 } 
 
@@ -15,8 +18,8 @@ inputs = {
 %%%%%%%Data%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%
 
-%Time: watch out that with this choice length(t)=600. lastRow - firtRow in the data must match this 
-t = transpose([.1:.1:60]);
+%Time: firstRow, lastRow set the extremes. Each row is 1/10 of second
+t = (transpose([firstRow:lastRow])-1)/10;
 
 %Counter start
 r = 1;
@@ -24,7 +27,7 @@ r = 1;
 %Cycle over files
 for f = 1:size(inputs,1)
 
-    [ fileName sheet bCol firstCol lastCol firstRow lastRow ] = inputs{f,:} ;
+    [ fileName sheet bCol firstCol lastCol ] = inputs{f,:} ;
     
     %Load background
     myBackground = excelRead(fileName,sheet,bCol,firstRow,lastRow) ;
@@ -46,5 +49,5 @@ end
 
 dfof = cell2mat(mydF);
 average = mean(dfof,2);
-plot(t,dfof); hold;
+plot(t,dfof); hold on;
 plot(t,average,'k--');
