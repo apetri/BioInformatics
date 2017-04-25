@@ -9,8 +9,8 @@ lastRow = 300
 %Each input row must be in the format: <fileName> <sheet> <background column> <first data column> <last data column>
 inputs = {
     
-    'data/a2.xlsx' 1 'B' 'C' 'D' ;
-    'data/a2.xlsx' 1 'B' 'E' 'G' ;
+    'data/a1_large.xlsx' 1 'A' 'U' 'AB' ;
+    %'data/a2.xlsx' 1 'B' 'E' 'G' ;
 
 } 
 
@@ -27,14 +27,14 @@ r = 1;
 %Cycle over files
 for f = 1:size(inputs,1)
 
-    [ fileName sheet bCol firstCol lastCol ] = inputs{f,:} ;
+    [ fileName sheet bCol firstCol lastCol ] = inputs{f,:};
     
     %Load background
     myBackground = excelRead(fileName,sheet,bCol,firstRow,lastRow) ;
 
     %Load data, subtract background
-    for col = firstCol:lastCol
-        myData{r} = excelRead(fileName,sheet,col,firstRow,lastRow) ;
+    for col = col2int(firstCol):col2int(lastCol)
+        myData{r} = excelRead(fileName,sheet,int2col(col),firstRow,lastRow) ;
         myClean{r} = myData{r} - myBackground ;
         myF{r} = mean(myClean{r}(100:200)) ;
         mydF{r} = myClean{r}/myF{r} - 1.0 ;

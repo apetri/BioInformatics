@@ -36,9 +36,9 @@ if nargin <= 3
 end
 
 %% Import the data
-[~, ~, raw] = xlsread(workbookFile, sheetName, sprintf('%c%d:%c%d',colN,startRow(1),colN,endRow(1)));
+[~, ~, raw] = xlsread(workbookFile, sheetName, sprintf('%s%d:%s%d',colN,startRow(1),colN,endRow(1)));
 for block=2:length(startRow)
-    [~, ~, tmpRawBlock] = xlsread(workbookFile, sheetName, sprintf('%c%d:%c%d',colN,startRow(block),colN,endRow(block)));
+    [~, ~, tmpRawBlock] = xlsread(workbookFile, sheetName, sprintf('%s%d:%s%d',colN,startRow(block),colN,endRow(block)));
     raw = [raw;tmpRawBlock]; %#ok<AGROW>
 end
 raw(cellfun(@(x) ~isempty(x) && isnumeric(x) && isnan(x),raw)) = {''};
