@@ -34,6 +34,7 @@ def parseFile(fname):
 		#Compute stats
 		stats = values.describe().T
 		stats["count"] = stats["count"].astype(int)
+		stats.index.name = "filename"
 
 		return stats
 
@@ -71,7 +72,7 @@ def main():
 	results = pd.concat(results)
 
 	#Output
-	results.to_csv(sys.stdout)
+	results.reset_index().to_html(sys.stdout,index=False)
 
 
 if __name__=="__main__":
