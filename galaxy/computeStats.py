@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys,argparse
+import sys,os,argparse
 import glob
 import logging
 
@@ -29,9 +29,11 @@ def parseFile(fname):
 			ln = ln + 1
 
 		#Parse array in a DataFrame
-		values = pd.DataFrame({fname:values})
+		logging.info("Putting values in DataFrame.")
+		values = pd.DataFrame({os.path.basename(fname):values})
 		
 		#Compute stats
+		logging.info("Computing stats.")
 		stats = values.describe().T
 		stats["count"] = stats["count"].astype(int)
 		stats.index.name = "filename"
